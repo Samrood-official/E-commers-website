@@ -62,3 +62,4 @@ app.listen(port, () => {
   console.log(`localhost://${port} connected`)
 });
 
+module.exports = app;

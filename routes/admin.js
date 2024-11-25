@@ -7,7 +7,7 @@ const couponhelpers = require('../helpers/coupon-helpers')
 const offerhelpers = require('../helpers/offer-helpers')
 const bannerHelper = require('../helpers/banner-helpers')
 // const path = require('path')
-const fs =require('fs')
+const fs = require('fs')
 // setting layout for admin side seperate...
 const setAdminLayout = (req, res, next) => {
   res.locals.layout = 'admin-layout'
@@ -34,16 +34,15 @@ router.get('/login', (req, res) => {
 
 // admin login post
 router.post('/login', (req, res) => {
-  adminhelpers.adminLogin(req.body).then((response) => {
-    if (response.status) {
-      req.session.loggedIn = true
-      req.session.admin = response.admin
-      res.redirect('/admin')
-    } else {
-      req.session.loginErr = "invalid email or password"
-      res.redirect('/admin/login')
-    }
-  })
+  const response = adminhelpers.adminLogin(req.body)
+  if (response.status) {
+    req.session.loggedIn = true
+    req.session.admin = response.admin
+    res.redirect('/admin')
+  } else {
+    req.session.loginErr = "invalid email or password"
+    res.redirect('/admin/login')
+  }
 })
 
 // dashboard management
@@ -75,14 +74,14 @@ router.get('/', verifyAdminLogin, async (req, res) => {
 // product management
 router.get('/product-management', verifyAdminLogin, (req, res) => {
   let admin = req.session.admin
-    producthelpers.getAllProducts().then((products) => {
-      res.render('admin/product-management', { products, admin })
-    })
+  producthelpers.getAllProducts().then((products) => {
+    res.render('admin/product-management', { products, admin })
+  })
 
 })
 
 //view product details
-router.get('/view-product-details/:id',verifyAdminLogin,(req,res)=>{
+router.get('/view-product-details/:id', verifyAdminLogin, (req, res) => {
   let admin = req.session.admin
   producthelpers.getProductDetails(req.params.id).then((product) => {
     res.render('admin/view-product-details', { product, admin })
@@ -135,28 +134,28 @@ router.get('/edit-product/:id', verifyAdminLogin, (req, res) => {
 router.post('/edit-product/:id', verifyAdminLogin, (req, res) => {
   id = req.params.id
   producthelpers.updateProduct(req.params.id, req.body).then(() => {
-    try{
-    if (req.files.image) {
-      let image = req.files.image
-      image.mv('./public/product-images/' + id + '.jpg')
-    }
-    if (req.files.image1) {
-      let image1 = req.files.image1
-      image1.mv('./public/product-images/' + id + '1.jpg')
-    }
-    if (req.files.image2) {
-      let image2 = req.files.image2
-      image2.mv('./public/product-images/' + id + '2.jpg')
-    }
-    if (req.files.image3) {
-      let image3 = req.files.image3
-      image3.mv('./public/product-images/' + id + '3.jpg')
-    }
-    res.redirect('/admin/product-management')
+    try {
+      if (req.files.image) {
+        let image = req.files.image
+        image.mv('./public/product-images/' + id + '.jpg')
+      }
+      if (req.files.image1) {
+        let image1 = req.files.image1
+        image1.mv('./public/product-images/' + id + '1.jpg')
+      }
+      if (req.files.image2) {
+        let image2 = req.files.image2
+        image2.mv('./public/product-images/' + id + '2.jpg')
+      }
+      if (req.files.image3) {
+        let image3 = req.files.image3
+        image3.mv('./public/product-images/' + id + '3.jpg')
+      }
+      res.redirect('/admin/product-management')
 
-  }catch{
-    res.redirect('/admin/product-management')
-  }
+    } catch {
+      res.redirect('/admin/product-management')
+    }
   })
 })
 
@@ -165,10 +164,10 @@ router.get('/delete-product/:id', verifyAdminLogin, (req, res) => {
   let id = req.params.id
   producthelpers.deleteProduct(id).then(() => {
     res.redirect('/admin/product-management')
-    fs.unlinkSync('public/product-images/' + id +'.jpg')
-    fs.unlinkSync('public/product-images/' + id +'1.jpg')
-    fs.unlinkSync('public/product-images/' + id +'2.jpg')
-    fs.unlinkSync('public/product-images/' + id +'3.jpg')   
+    fs.unlinkSync('public/product-images/' + id + '.jpg')
+    fs.unlinkSync('public/product-images/' + id + '1.jpg')
+    fs.unlinkSync('public/product-images/' + id + '2.jpg')
+    fs.unlinkSync('public/product-images/' + id + '3.jpg')
   })
 })
 
@@ -208,7 +207,7 @@ router.post('/add-category', verifyAdminLogin, (req, res) => {
 })
 
 // edit category
-router.get('/edit-category/:id', verifyAdminLogin, (req, res) => {   
+router.get('/edit-category/:id', verifyAdminLogin, (req, res) => {
   let admin = req.session.admin
   producthelpers.getCategory(req.params.id).then((cate) => {
     res.render('admin/edit-category', { cate, "catEditErr": req.session.catEditErr, admin })
@@ -287,9 +286,9 @@ router.get('/coupon-management', verifyAdminLogin, async (req, res) => {
 })
 
 // add coupon get
-router.get('/add-coupon', verifyAdminLogin,async (req, res) => {
+router.get('/add-coupon', verifyAdminLogin, async (req, res) => {
   let admin = req.session.admin
-  res.render('admin/add-coupon', { admin})
+  res.render('admin/add-coupon', { admin })
 })
 
 // add coupon post
@@ -385,7 +384,7 @@ router.get('/chart-data', verifyAdminLogin, (req, res) => {
 router.get('/banner-management', verifyAdminLogin, (req, res, next) => {
   let admin = req.session.admin
   bannerHelper.getAllBanners().then((allbanners) => {
-      res.render('admin/banner-management', { allbanners,admin })
+    res.render('admin/banner-management', { allbanners, admin })
   })
 })
 
@@ -397,13 +396,13 @@ router.get('/add-banner', verifyAdminLogin, (req, res, next) => {
 router.post('/add-banner', verifyAdminLogin, (req, res) => {
   console.log(req.body);
   bannerHelper.addBanner(req.body).then((response) => {
-      let id = response.insertedId
-      let image = req.files.image
-      image.mv('./public/banner-images/' + id +'.jpg')
-      res.redirect('/admin/banner-management')
+    let id = response.insertedId
+    let image = req.files.image
+    image.mv('./public/banner-images/' + id + '.jpg')
+    res.redirect('/admin/banner-management')
   }).catch(() => {
-      req.session.bannerRepeatError = "Banner already added!!"  
-      res.redirect('/admin/add-banner')
+    req.session.bannerRepeatError = "Banner already added!!"
+    res.redirect('/admin/add-banner')
   })
 })
 
@@ -412,8 +411,8 @@ router.get('/edit-banner/:id', verifyAdminLogin, (req, res) => {
   let admin = req.session.admin
   let id = req.params.id
   bannerHelper.getBannerDetails(id).then((bannerDetails) => {
-      console.log(bannerDetails);
-      res.render('admin/edit-banner', {bannerDetails, admin })
+    console.log(bannerDetails);
+    res.render('admin/edit-banner', { bannerDetails, admin })
   })
 })
 
@@ -421,11 +420,11 @@ router.get('/edit-banner/:id', verifyAdminLogin, (req, res) => {
 router.post('/edit-banner', (req, res) => {
   let id = req.body._id
   bannerHelper.editBanner(req.body).then(() => {
-      if (req.files.image) {
-          let image = req.files.image
-          image.mv('./public/banner-images/' + id +'.jpg')
-      }
-      res.redirect('/admin/banner-management')
+    if (req.files.image) {
+      let image = req.files.image
+      image.mv('./public/banner-images/' + id + '.jpg')
+    }
+    res.redirect('/admin/banner-management')
   })
 })
 
@@ -433,8 +432,8 @@ router.post('/edit-banner', (req, res) => {
 router.get('/delete-banner/:id', verifyAdminLogin, (req, res) => {
   let id = req.params.id
   bannerHelper.deleteBanner(id).then(() => {
-      res.redirect('/admin/banner-management')
-      fs.unlinkSync('public/banner-images/' + id +'.jpg')
+    res.redirect('/admin/banner-management')
+    fs.unlinkSync('public/banner-images/' + id + '.jpg')
   })
 });
 
@@ -443,5 +442,5 @@ router.get('/logout', (req, res) => {
   req.session.admin = null
   res.redirect('/admin/login')
 })
-  
+
 module.exports = router;

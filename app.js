@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var dotenv = require('dotenv')
+dotenv.config()
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
 var hbs = require('express-handlebars')
@@ -13,7 +14,6 @@ var db =require('./config/connection')
 var session =require('express-session')     
 var Handlebars = require('handlebars');
 
-dotenv.config()
 
 Handlebars.registerHelper("inc", function(value, options)
 {

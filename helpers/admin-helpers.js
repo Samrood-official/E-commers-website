@@ -14,24 +14,24 @@ module.exports = {
     adminLogin: (adminData) => {
         let response = {}
         return new Promise(async (resolve, reject) => {
-            try{
-            await db.get().collection('admin').findOne({ email: adminData.email }).then((result) => {
-                adminData.password = parseInt(adminData.password)
-                if (result) {
-                    if (result.password == adminData.password) {
-                        response.status = true;
-                        response.admin = result;
-                        resolve(response)
+            try {
+                await db.get().collection('admin').findOne({ email: adminData.email }).then((result) => {
+                    adminData.password = parseInt(adminData.password)
+                    if (result) {
+                        if (result.password == adminData.password) {
+                            response.status = true;
+                            response.admin = result;
+                            resolve(response)
+                        } else {
+                            resolve({ status: false })
+                        }
                     } else {
                         resolve({ status: false })
                     }
-                } else {
-                    resolve({ status: false })
-                }
-            })
-        }catch{
-            resolve(0)
-        }
+                })
+            } catch {
+                resolve(0)
+            }
         })
     },
 
@@ -73,55 +73,55 @@ module.exports = {
 
     changeOrdeStatus: (data) => {
         return new Promise((resolve, reject) => {
-            try{
-            if (data.status == 'Shipped') {
-                db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(data.OrderId) },
-                    {
-                        $set: {
-                            status: data.status,
-                            is_shipped: true
-                        }
-                    }).then((response) => {
-                        resolve()
-                    })
-            } else if (data.status == 'Delivered') {
-                db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(data.OrderId) },
-                    {
-                        $set: {
-                            status: data.status,
-                            is_delivered: true,  
-                            deliverdDate: new Date()
-                        }
-                    }).then((response) => {
+            try {
+                if (data.status == 'Shipped') {
+                    db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(data.OrderId) },
+                        {
+                            $set: {
+                                status: data.status,
+                                is_shipped: true
+                            }
+                        }).then((response) => {
+                            resolve()
+                        })
+                } else if (data.status == 'Delivered') {
+                    db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(data.OrderId) },
+                        {
+                            $set: {
+                                status: data.status,
+                                is_delivered: true,
+                                deliverdDate: new Date()
+                            }
+                        }).then((response) => {
 
-                        resolve()
-                    })
-            } else if (data.status == 'Cancelled') {
-                db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(data.OrderId) },
-                    {
-                        $set: {
-                            status: data.status,
-                            is_Cancelled: true
-                        }
-                    }).then((response) => {
+                            resolve()
+                        })
+                } else if (data.status == 'Cancelled') {
+                    db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(data.OrderId) },
+                        {
+                            $set: {
+                                status: data.status,
+                                is_Cancelled: true
+                            }
+                        }).then((response) => {
 
-                        resolve()
-                    })
+                            resolve()
+                        })
+                }
+                else {
+                    db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(data.OrderId) },
+                        {
+                            $set: {
+                                status: data.status
+                            }
+                        }).then((response) => {
+
+                            resolve()
+                        })
+                }
+            } catch {
+                resolve(0)
             }
-            else {
-                db.get().collection(collection.ORDER_COLLECTION).updateOne({ _id: objectId(data.OrderId) },
-                    {
-                        $set: {
-                            status: data.status
-                        }
-                    }).then((response) => {
-
-                        resolve()
-                    })
-            }
-        }catch{
-            resolve(0)
-        }
         })
     },
 
@@ -235,7 +235,7 @@ module.exports = {
                     {
                         $match: {
                             date: {
-                                $gte: new Date(new Date() - 1000 * 60 * 60 * 24 * 7 *12)
+                                $gte: new Date(new Date() - 1000 * 60 * 60 * 24 * 7 * 12)
                             }
                         }
                     },
@@ -297,66 +297,38 @@ module.exports = {
 
     totalRevenue: () => {
         return new Promise(async (resolve, reject) => {
-            try{
-            let totalRevenue = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
-                {
-                    $match: {
-                        status: "Delivered"
-                    }
+            try {
+                let totalRevenue = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+                    {
+                        $match: {
+                            status: "Delivered"
+                        }
 
-                },
-                {
-                    $project: {
-                        totalAmount: "$totalAmount"
+                    },
+                    {
+                        $project: {
+                            totalAmount: "$totalAmount"
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            totalAmount: { $sum: '$totalAmount' }
+                        }
                     }
-                },
-                {
-                    $group: {
-                        _id: null,
-                        totalAmount: { $sum: '$totalAmount' }
-                    }
-                }
-            ]).toArray()
-             console.log(totalRevenue[0]);
-            resolve(totalRevenue[0].totalAmount)
-        }catch{
-            resolve(0)
-        }
+                ]).toArray()
+                console.log(totalRevenue[0]);
+                resolve(totalRevenue[0].totalAmount)
+            } catch {
+                resolve(0)
+            }
         })
     },
 
 
     getchartData: (req, res) => {
         return new Promise((resolve, reject) => {
-            try{
-            db.get().collection(collection.ORDER_COLLECTION).aggregate([
-                { $match: { "status": "Delivered" } },
-                {
-                    $project: {
-                        date: { $convert: { input: "$_id", to: "date" } }, total: "$totalAmount"
-                    }
-                },
-                {
-                    $match: {
-                        date: {
-                            $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * 365))
-                        }
-                    }
-                },
-                {
-                    $group: {
-                        _id: { $month: "$date" },
-                        total: { $sum: "$total" }
-                    }
-                },
-                {
-                    $project: {
-                        month: "$_id",
-                        total: "$total",
-                        _id: 0
-                    }
-                }
-            ]).toArray().then(result => {
+            try {
                 db.get().collection(collection.ORDER_COLLECTION).aggregate([
                     { $match: { "status": "Delivered" } },
                     {
@@ -367,41 +339,69 @@ module.exports = {
                     {
                         $match: {
                             date: {
-                                $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * 7))
+                                $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * 365))
                             }
                         }
                     },
                     {
                         $group: {
-                            _id: { $dayOfWeek: "$date" },
+                            _id: { $month: "$date" },
                             total: { $sum: "$total" }
                         }
                     },
                     {
                         $project: {
-                            date: "$_id",
+                            month: "$_id",
                             total: "$total",
                             _id: 0
                         }
-                    },
-                    {
-                        $sort: { date: 1 }
                     }
-                ]).toArray().then(weeklyReport => {
-                    console.log("weekly", weeklyReport)
-                    console.log("result", result);
-                    let obj = {
-                        result, weeklyReport
-                    }
-                    // resolve(result,weeklyReport)
-                    resolve(obj)
-                    // res.json({ data: result, weeklyReport})
-                    // console.log(result)
+                ]).toArray().then(result => {
+                    db.get().collection(collection.ORDER_COLLECTION).aggregate([
+                        { $match: { "status": "Delivered" } },
+                        {
+                            $project: {
+                                date: { $convert: { input: "$_id", to: "date" } }, total: "$totalAmount"
+                            }
+                        },
+                        {
+                            $match: {
+                                date: {
+                                    $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * 7))
+                                }
+                            }
+                        },
+                        {
+                            $group: {
+                                _id: { $dayOfWeek: "$date" },
+                                total: { $sum: "$total" }
+                            }
+                        },
+                        {
+                            $project: {
+                                date: "$_id",
+                                total: "$total",
+                                _id: 0
+                            }
+                        },
+                        {
+                            $sort: { date: 1 }
+                        }
+                    ]).toArray().then(weeklyReport => {
+                        console.log("weekly", weeklyReport)
+                        console.log("result", result);
+                        let obj = {
+                            result, weeklyReport
+                        }
+                        // resolve(result,weeklyReport)
+                        resolve(obj)
+                        // res.json({ data: result, weeklyReport})
+                        // console.log(result)
+                    })
                 })
-            })
-        }catch{
-            resolve(0)
-        }
+            } catch {
+                resolve(0)
+            }
         })
     },
 }

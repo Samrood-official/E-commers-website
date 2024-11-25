@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./api/server.js",
-    "build": "echo 'No build step required"
+    "build": "echo 'No build step required'"
   },
   "vercel-build": {
     "functions": "./api"

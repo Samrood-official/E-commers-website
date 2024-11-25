@@ -59,7 +59,7 @@ app.use(function(err, req, res, next) {
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
-  console.log(`localhost://${port} connected`)
+  console.log(`server is running on port ${port}`)
 });
 
 module.exports = app;

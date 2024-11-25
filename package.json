@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node ./api/server.js",
+    "build": "echo 'No build step required"
+  },
+  "vercel-build": {
+    "functions": "./api"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

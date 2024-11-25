@@ -41,6 +41,7 @@ const veryfilogin = (req, res, next) => {
 // HOME PAGE
 router.get('/', async (req, res, next) => {
   try {
+    console.log("🚀 ~ router.get ~ next:")
     let cartCount = 0
     let wishCount = 0
     let user;
@@ -633,6 +634,3 @@ router.get('/search',async(req,res) => {
 })
 
 module.exports = router; 
-
-
-

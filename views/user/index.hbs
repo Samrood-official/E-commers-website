@@ -5,7 +5,7 @@
             <div id="header-carousel" class="carousel slide carousel-fade mb-30 mb-lg-0" data-ride="carousel">
                 <ol class="carousel-indicators">
                     {{#each banners}}
-                    <li data-target="#header-carousel" data-slide-to="{{@index}}" class="{{#if @first}}active{{/if}}"></li>
+                    <li data-target="#header-carousel" data-slide-to="{{@index}}" class="{{#if @first}} active {{/if}}"></li>
                     {{/each}}
                 </ol>
                 <div class="carousel-inner">
@@ -137,13 +137,13 @@
                         <a class="btn btn-outline-dark btn-square" onclick="addToCart('{{this._id}}')"><i
                                 class="fa fa-shopping-cart"></i></a>
                         <a class="btn btn-outline-dark btn-square" id="{{this._id}}"
-                                    onclick="addTowishlist('{{this._id}}')"><i class="far fa-heart"></i></a>
+                            onclick="addTowishlist('{{this._id}}')"><i class="far fa-heart"></i></a>
                         <a class="btn btn-outline-dark btn-square" href="/view-product/{{this._id}}"><i
                                 class="fa fa-eye"></i></a>
                         <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
                     </div>
                 </div>
-                <div class="text-center py-4"  >
+                <div class="text-center py-4">
                     <a class="h6 text-decoration-none text-truncate" href="">{{this.name}}</a>
                     {{#if this.noStock}}
                     <div class="text-danger font-weight-bold">Out of Stock</div>

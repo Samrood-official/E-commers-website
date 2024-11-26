@@ -19,6 +19,7 @@ const client = require('twilio')(accountSID, authToken)
 // veryfilogin middleware
 const veryfilogin = (req, res, next) => {
   try {
+    console.log("🚀 ~ veryfilogin ~ req.session.userLoggedIn:", req.session.userLoggedIn)
     if (req.session.userLoggedIn) {
       userhelpers.isblocked(req.session.user._id).then((response) => {
         if (response.isblocked) {
@@ -129,6 +130,9 @@ router.post('/login', (req, res) => {
       req.session.user = response.user
       res.redirect('/')
     }
+  }).catch((err)=> {
+    req.session.noUserErr = err;
+    res.redirect('/login')
   })
 })
 
@@ -559,6 +563,7 @@ router.get('/add-to-wishlist/:proId', (req, res) => {
 // wishlist get
 router.get('/wishlist', veryfilogin, async (req, res) => {
   let userId = req.session.user._id
+  console.log("🚀 ~ router.get ~ req.session:", req.session)
   let wishCount = await wishlisthelpers.getWishlistCount(userId)
   let wishProduct = await wishlisthelpers.getWishlistProduct(userId)
   let cartCount = await carthelpers.getCartCount(userId)

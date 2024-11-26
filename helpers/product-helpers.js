@@ -29,10 +29,10 @@ module.exports = {
     getAllProducts: () => {
         return new Promise(async (resolve, reject) => {
             try {
-                let products = await db.get().collection(collection.PRODUCT_COLLECTION).find().sort({ date: -1 }).toArray()
-                resolve(products)
+                const res = await db.get().collection(collection.PRODUCT_COLLECTION).find().sort({ date: -1 }).toArray()
+                resolve(res)
             } catch {
-                resolve(0)
+                resolve([])
             }
         })
     },

@@ -12,27 +12,35 @@ module.exports = {
     },
 
     adminLogin: (adminData) => {
-        let response = {}
-        return new Promise(async (resolve, reject) => {
-            try {
-                await db.get().collection('admin').findOne({ email: adminData.email }).then((result) => {
-                    adminData.password = parseInt(adminData.password)
-                    if (result) {
-                        if (result.password == adminData.password) {
-                            response.status = true;
-                            response.admin = result;
-                            resolve(response)
-                        } else {
-                            resolve({ status: false })
-                        }
-                    } else {
-                        resolve({ status: false })
-                    }
-                })
-            } catch {
-                resolve(0)
-            }
-        })
+        const { email, password } = adminData;
+        const { admin_email, admin_password } = process.env;
+
+        if (email !== admin_email || password !== admin_password) {
+            return ({ status: false })
+        }
+
+        return ({ status: true, admin: { email: admin_email } })
+
+        // return new Promise(async (resolve, reject) => {
+        //     try {
+        //         await db.get().collection('admin').findOne({ email: adminData.email }).then((result) => {
+        //             adminData.password = parseInt(adminData.password)
+        //             if (result) {
+        //                 if (result.password == adminData.password) {
+        //                     response.status = true;
+        //                     response.admin = result;
+        //                     resolve(response)
+        //                 } else {
+        //                     resolve({ status: false })
+        //                 }
+        //             } else {
+        //                 resolve({ status: false })
+        //             }
+        //         })
+        //     } catch {
+        //         resolve(0)
+        //     }
+        // })
     },
 
     blockUser: (id) => {

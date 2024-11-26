@@ -47,26 +47,29 @@ router.get('/', async (req, res, next) => {
     let user;
     let todayDate = new Date().toISOString().slice(0, 10);
     let banners = await bannerHelpers.getAllBanners()
+    console.log("🚀 ~ router.get ~ banners:", banners)
     let startCategoryOffer = await offerHelpers.startCategoryOffer(todayDate)
     let startCouponOffer = await couponHelpers.startCouponOffer(todayDate)
-    let products = await producthelpers.getAllProducts()
-    products?.forEach((element) => {
+    let products = await producthelpers.getAllProducts() || []
+    console.log("🚀 ~ router.get ~ products:", products)
+    for(const element in products) {
       if (element.stock < 10 && element.stock != 0) {
         element.fewStock = true
       } else if (element.stock == 0) {
         element.noStock = true
       }
-    })
+    }
+
     if (req.session.userLoggedIn) {
       user = req.session.user
       wishCount = await wishlisthelpers.getWishlistCount(user._id)
       cartCount = await carthelpers.getCartCount(user._id)
     }
+
     res.render('user/index', { products, user, cartCount, wishCount, banners })
   } catch (error){
     console.log("error ", error)
   }
-
 });
 
 // signup get

@@ -1,3 +1,36 @@
-<h1>{{message}}</h1>
-<h2>{{error.status}}</h2>
-<pre>{{error.stack}}</pre>
+<style>
+    .min-vh-100 {
+        min-height: calc(100vh - 300px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: #f8d7da;
+        color: #842029;
+        font-family: Arial, sans-serif;
+    }
+
+    .error-box {
+        padding: 20px;
+        border: 1px solid #f5c2c7;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+</style>
+<div class="min-vh-100">
+    <div class="error-box">
+        <h1>{{message}}</h1>
+        <p>The page you are looking for cannot be found. Please check the URL or go back to the homepage.</p>
+    </div>
+</div>

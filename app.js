@@ -11,9 +11,9 @@ var hbs = require('express-handlebars')
 var app = express();
 var fileUpload = require('express-fileupload')
 var db = require('./config/connection')
-var session = require('express-session')
+// var session = require('express-session')
 var Handlebars = require('handlebars');
-
+const session = require('cookie-session');
 
 Handlebars.registerHelper("inc", function (value, options) {
   return parseInt(value) + 1;
@@ -37,7 +37,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload())
 
-app.use(session({ secret: "key", resave: false, saveUninitialized: false, cookie: { maxAge: 6000000 } }))
+// app.use(session({ secret: "key", resave: false, saveUninitialized: false, cookie: { maxAge: 6000000 } }))
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',  // Only true if using HTTPS
+    httpOnly: true, 
+    sameSite: 'strict'
+  }
+}));
 
 db.connect((err) => {
   if (err) console.log('Connection Error' + err);

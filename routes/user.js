@@ -19,7 +19,7 @@ const client = require('twilio')(accountSID, authToken)
 // veryfilogin middleware
 const veryfilogin = (req, res, next) => {
   try {
-    console.log("🚀 ~ veryfilogin ~ req.session.userLoggedIn:", req.session.userLoggedIn)
+    console.log("🚀 ~ veryfilogin ~ req.session.userLoggedIn:", req.session)
     if (req.session.userLoggedIn) {
       userhelpers.isblocked(req.session.user._id).then((response) => {
         if (response.isblocked) {
@@ -61,6 +61,7 @@ router.get('/', async (req, res, next) => {
       }
     }
 
+    console.log("🚀 ~ router.get ~ req.session:", req.session)
     if (req.session.userLoggedIn) {
       user = req.session.user
       wishCount = await wishlisthelpers.getWishlistCount(user._id)

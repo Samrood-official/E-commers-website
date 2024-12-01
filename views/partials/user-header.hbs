@@ -123,8 +123,8 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse" >
                     <div class="navbar-nav mr-auto py-0">
-                        <a href="/" class="nav-item nav-link active  pl-1 ">Home</a>
-                        <a href="/shop" class="nav-item nav-link  pl-1">Shop</a>
+                        <a href="/" class="nav-item nav-link path pl-1 ">Home</a>
+                        <a href="/shop" class="nav-item nav-link path pl-1">Shop</a>
                         
                         {{!-- <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i
@@ -134,22 +134,22 @@
                                 <a href="checkout.html" class="dropdown-item">Checkout</a>
                             </div>
                         </div> --}}
-                        <a href="/view-orders" class="nav-item nav-link ">Orders</a>
+                        <a href="/orders" class="nav-item nav-link path">Orders</a>
                        
                         
                     </div>
                     <div class="navbar-nav ml-auto py-0  d-lg-block">
-                         <a href="/wishlist" class="btn pl-0 pt-3  mr-auto text-light">Wishlist
+                         <a href="/wishlist" class="btn pl-0 pt-3  mr-auto path text-light">Wishlist
                             <i class="fas fa-heart text-light"></i>
                             <span class="badge text-secondary border border-secondary rounded-circle"
                                 style="padding-bottom: 2px;" id="wish-count">{{wishCount}}</span>
                         </a>
-                        <a href="/cart" class="btn pl-0 pt-3  mr-auto text-light">Cart
+                        <a href="/cart" class="btn pl-0 pt-3  mr-auto text-light path">Cart
                             <i class="fas fa-shopping-cart text-light"></i>
                             <span class="badge text-secondary border border-secondary rounded-circle"
                              style="padding-bottom: 2px;" id="cart-count">{{cartCount}}</span>
                         </a>
-                        <a href="/my-profile" style="padding-top: 14px;" class="btn px-0 text-light mr-auto">Profile &nbsp;
+                        <a href="/my-profile" style="padding-top: 14px;" class="btn px-0 text-light mr-auto path">Profile &nbsp;
                             <i class="fas fa-user text-light"></i>
                         </a>
                     </div>
@@ -158,31 +158,18 @@
         </div>
     </div>
 </div>
-{{!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> --}}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentPath = location.pathname; // Get the current path
+        const navLinks = document.querySelectorAll('.path');
 
-{{!-- <script>
-    
-    
-
-
-    //function Search() {
-   // let value = document.getElementById('search').value.trim();
-
-    //console.log('searching called')
-    //$.ajax({
-      //  url: `/searching/${value}`,
-       // method: 'get',
-        //success: (response) => {
-            
-          //  document.getElementById()
-        //}
-    //})
-//}
-
-
-
-
-               
-//</script> --}}
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.remove('text-light')
+                link.style.color = '#ffc107'
+            }
+        });
+    });
+</script>
 {{/if}}
 <!-- Navbar End -->

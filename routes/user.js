@@ -384,12 +384,12 @@ router.get('/order-placed', veryfilogin, (req, res) => {
 })
 
 // view user orders
-router.get('/view-orders', veryfilogin, async (req, res) => {
+router.get('/orders', veryfilogin, async (req, res) => {
   let user = req.session.user
   let wishCount = await wishlisthelpers.getWishlistCount(user._id)
   let cartCount = await carthelpers.getCartCount(user._id)
   let orderData = await userhelpers.getUserOrders(user._id)
-  res.render('user/view-orders', { orderData, user, cartCount, wishCount })
+  res.render('user/orders', { orderData, user, cartCount, wishCount })
 })
 
 // user orders 
@@ -417,7 +417,7 @@ router.get('/view-order-products/:id', async (req, res) => {
 //return product
 router.get('/return-order/:id', (req, res) => {
   userhelpers.returnOrder(req.params.id).then(() => {
-    res.redirect('/view-orders')
+    res.redirect('/orders')
   })
 })
 
@@ -434,7 +434,7 @@ router.get('/invoice/:id', veryfilogin, async (req, res) => {
 // cancel order get
 router.get('/cancel-order/:id', veryfilogin, (req, res) => {
   userhelpers.cancelOrder(req.params.id).then(() => {
-    res.redirect('/view-orders')
+    res.redirect('/orders')
   })
 })
 

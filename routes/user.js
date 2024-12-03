@@ -17,26 +17,24 @@ const client = require('twilio')(accountSID, authToken)
 
 // middleware
 // veryfilogin middleware
-const veryfilogin = (req, res, next) => {
+const veryfilogin = async (req, res, next) => {
   try {
-    console.log("🚀 ~ veryfilogin ~ req.session.userLoggedIn:", req.session)
-    if (req.session.userLoggedIn) {
-      userhelpers.isblocked(req.session.user._id).then((response) => {
-        if (response.isblocked) {
-          req.session.userLoggedIn = null
-          req.session.blockErr = 'You Are Blocked'
-          res.redirect('/login')
-        } else {
-          next()
-        }
-      })
-    } else {
+    if (!req.session.userLoggedIn) {
       res.redirect('/login')
     }
+
+    const response = await userhelpers.isblocked(req.session.user._id);
+
+    if (!response || response?.isblocked) {
+      req.session.userLoggedIn = null
+      req.session.blockErr = response?.isblocked ? 'You Are Blocked' : null;
+      res.redirect('/login')
+    }
+
+    next()
   } catch (err) {
     res.redirect('/login')
   }
-
 }
 
 // HOME PAGE
@@ -53,7 +51,7 @@ router.get('/', async (req, res, next) => {
     let startCouponOffer = await couponHelpers.startCouponOffer(todayDate)
     let products = await producthelpers.getAllProducts() || []
     console.log("🚀 ~ router.get ~ products:", products)
-    for(const element in products) {
+    for (const element in products) {
       if (element.stock < 10 && element.stock != 0) {
         element.fewStock = true
       } else if (element.stock == 0) {
@@ -69,7 +67,7 @@ router.get('/', async (req, res, next) => {
     }
 
     res.render('user/index', { products, user, cartCount, wishCount, banners })
-  } catch (error){
+  } catch (error) {
     console.log("error ", error)
   }
 });
@@ -131,7 +129,7 @@ router.post('/login', (req, res) => {
       req.session.user = response.user
       res.redirect('/')
     }
-  }).catch((err)=> {
+  }).catch((err) => {
     req.session.noUserErr = err;
     res.redirect('/login')
   })
@@ -617,28 +615,28 @@ router.get('/logout', (req, res) => {
 //     res.json({response})
 //   })
 // })
-router.get('/filter-product', async(req, res) => {
+router.get('/filter-product', async (req, res) => {
   console.log("filter function called")
   console.log(req.query)
   const { range, status } = req.query
   console.log(status);
-  let startRange=0; 
+  let startRange = 0;
   let lastRange = 0;
-  if (status !== 'true')return;
+  if (status !== 'true') return;
   console.log('ddddddd');
-  if (range === "price-1") {  startRange = 1000;  lastRange = 2000 }
-  if (range === "price-2") {  startRange = 100;  lastRange = 200 } 
-  if (range === "price-3") {  startRange = 200;  lastRange = 300 }
- const data = await producthelpers.filterPrice(startRange, lastRange)  
- if(data){
-   console.log(data);
-  res.status(200).json(data)
- }
-}) 
+  if (range === "price-1") { startRange = 1000; lastRange = 2000 }
+  if (range === "price-2") { startRange = 100; lastRange = 200 }
+  if (range === "price-3") { startRange = 200; lastRange = 300 }
+  const data = await producthelpers.filterPrice(startRange, lastRange)
+  if (data) {
+    console.log(data);
+    res.status(200).json(data)
+  }
+})
 
-router.get('/search',async(req,res) => {
+router.get('/search', async (req, res) => {
   const searchKey = req.query.searchKey
-  const response =await producthelpers.getProductsBySearch(searchKey)
+  const response = await producthelpers.getProductsBySearch(searchKey)
   res.json(response)
 })
 
